@@ -34,6 +34,7 @@ MODEL_NAME_TO_OPTIONS = {
     "emformer_join": XNNPACKOptions(True, True),
     "emformer_predict": XNNPACKOptions(True, True),
     "emformer_transcribe": XNNPACKOptions(True, True),
+    "mmd_nca_net" : XNNPACKOptions(True, True)
 }
 
 
