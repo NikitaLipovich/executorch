@@ -184,15 +184,16 @@ class SimpleADB:
             callback()
 
 
-def ptq_calibrate(captured_model, quantizer, dataset):
+def ptq_calibrate(captured_model, quantizer, dataset=None):
     annotated_model = prepare_pt2e(captured_model, quantizer)
     print("Quantizing(PTQ) the model...")
     # calibration
-    if callable(dataset):
-        dataset(annotated_model)
-    else:
-        for data in dataset:
-            annotated_model(*data)
+    if dataset :
+        if callable(dataset):
+            dataset(annotated_model)
+        else:
+            for data in dataset:
+                annotated_model(*data)
     return annotated_model
 
 
@@ -245,7 +246,7 @@ def build_executorch_binary(
     inputs,  # noqa: B006
     soc_model,
     file_name,
-    dataset: List[torch.Tensor] | Callable[[torch.fx.GraphModule], None],
+    dataset: List[torch.Tensor] | Callable[[torch.fx.GraphModule], None]=None,
     skip_node_id_set=None,
     skip_node_op_set=None,
     quant_dtype: Optional[QuantDtype] = None,

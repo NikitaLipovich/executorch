@@ -1,22 +1,46 @@
+# System files
+.DS_Store
+
+# Python environment and cache
 .hypothesis
+.mypy_cache/
+.venv/
+__pycache__
+
+# Build and tool-generated files
+arm_test/
 buck-out/
 buck2-bin/
-cmake-out*
-.DS_Store
+build/
+build-*/
 cmake-android-out/
-cmake-out-android/
 cmake-ios-out/
+cmake-out*
+cmake-out-android/
+dist/
 ethos-u-scratch/
 executorch.egg-info
 pip-out/
-__pycache__/
 
 # Any exported models and profiling outputs
 *.pte
 *.model
-!test_tiktoken_tokenizer.model
 *.bin
+!test_tiktoken_tokenizer.model
 !test_bpe_tokenizer.bin
+
+# Editor temporaries
+*.sw[a-z]
+*~
+.~lock.*
+*.idea
+
+# Xcode
+xcuserdata/
+.build/
+.swiftpm/
+*.xcworkspace/
+*.xcframework/
 
 # Editor temporaries
 *.swa
@@ -38,3 +62,35 @@ __pycache__/
 *~
 .~lock.*
 *.idea
+*.o
+*.so
+*.a
+*.dylib
+*.dll
+*.exe
+# build/
+# !backends/qualcomm/builders/
+cmake-build*/
+*.pte
+*.raw
+*.class
+*.png
+*.jpg
+*.jpeg
+# *.xml
+deeplab_v3/voc_image/VOCdevkit/VOC2012/Annotations/*.xml
+deeplab_v3/voc_image/VOCdevkit/VOC2012/ImageSets/Main/*.txt
+deeplab_v3/voc_image/VOCdevkit/VOC2012/ImageSets/Segmentation/*.txt
+deeplab_v3/voc_image/VOCdevkit/VOC2012/ImageSets/Layout/*.txt
+deeplab_v3/voc_image/VOCdevkit/VOC2012/ImageSets/Action/*.txt
+*.tar
+!version.txt
+!requirements*.txt
+!.ci/docker/*.txt
+!*.cmake
+!*.fbs
+!*.py
+!CMakeLists.txt
+!requirements*.txt
+!version.txt
+# build-android/libexecutorch_core.a
