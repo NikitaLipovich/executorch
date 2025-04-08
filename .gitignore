@@ -11,7 +11,7 @@ __pycache__
 arm_test/
 buck-out/
 buck2-bin/
-build/
+!build/
 build-*/
 cmake-android-out/
 cmake-ios-out/
@@ -37,7 +37,6 @@ pip-out/
 
 # Xcode
 xcuserdata/
-.build/
 .swiftpm/
 *.xcworkspace/
 *.xcframework/
