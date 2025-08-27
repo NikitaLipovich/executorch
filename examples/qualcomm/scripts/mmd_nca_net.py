@@ -84,7 +84,7 @@ def main(args):
             data_size=data_num, dataset_dir=args.artifact, download=args.download
         )
 
-    pte_filename = "mmd_nca_net_qualcomm_8bit"
+    pte_filename = "mmd_nca_net_qualcomm"
     instance = MmdNcaNetModel()
 
     build_executorch_binary(

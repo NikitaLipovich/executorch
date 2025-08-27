@@ -10,7 +10,7 @@ import torch
 from torch.autograd import Variable
 
 from ..model_base import EagerModelBase
-from .mmd_nca_net import MMD_NCA_Net
+from .mmd_nca_transform_net import MMD_NCA_Net
 
 class MmdNcaNetModel(EagerModelBase):
     def __init__(self):
@@ -18,13 +18,8 @@ class MmdNcaNetModel(EagerModelBase):
 
     def get_eager_model(self) -> torch.nn.Module:
         logging.info("loading mmd_nca_net model")
-        mmd_nca_model = MMD_NCA_Net(frames_num=30, 
-                                    joints_num=13, 
-                                    dim_num=3)
+        mmd_nca_model = MMD_NCA_Net(sequence_size=30)
         logging.info("loaded mmd_nca_net model")
-        mmd_nca_model.load_weights(
-            '/workspace/workspace/executorch/examples/models/mmd_nca_net/weights/sequential_250_128_meta_quest_30_13_mobile_refactor_63499.pth')
-        logging.info("loaded mmd_nca_net weights")
         return mmd_nca_model
 
     def get_example_inputs(self) :
