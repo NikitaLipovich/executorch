@@ -435,23 +435,109 @@ int main(int argc, char** argv) {
         inference_index,
         elapsed_time,
         elapsed_time / inference_index);
-  } else {
-    // if no input is provided, fill the inputs with default values
-    auto inputs = prepare_input_tensors(*method);
-    ET_CHECK_MSG(
-        inputs.ok(),
-        "Could not prepare inputs: 0x%" PRIx32,
-        (uint32_t)inputs.error());
-    ET_LOG(
-        Info,
-        "Input list not provided. Inputs prepared with default values set.");
-    Error status = method->execute();
-    ET_CHECK_MSG(
-        status == Error::Ok,
-        "Execution of method %s failed with status 0x%" PRIx32,
-        method_name,
-        (int)status);
-    ET_LOG(Info, "Model executed successfully.");
+    } else {
+      // If no input is provided, fill the inputs with default values
+      auto inputs = prepare_input_tensors(*method);
+      ET_CHECK_MSG(
+          inputs.ok(),
+          "Could not prepare inputs: 0x%" PRIx32,
+          (uint32_t)inputs.error());
+      ET_LOG(
+          Info,
+          "Input list not provided. Inputs prepared with default values set.");
+  
+      // Log input tensor details
+      for (size_t input_index = 0; input_index < method->inputs_size(); ++input_index) {
+          const auto input_tensor = method->get_input(input_index).toTensor();
+          auto sizes = input_tensor.sizes(); // Get tensor dimensions
+          std::string shape_str = "[";
+          for (size_t i = 0; i < sizes.size(); ++i) {
+              shape_str += std::to_string(sizes[i]);
+              if (i < sizes.size() - 1) shape_str += ", ";
+          }
+          shape_str += "]";
+          ET_LOG(Info, "Input %zu shape: %s", input_index, shape_str.c_str());
+  
+          // Check if the shape matches [30, 13, 3]
+          bool is_expected_shape = sizes.size() == 3 && sizes[0] == 30 &&
+                                  sizes[1] == 13 && sizes[2] == 3;
+          ET_LOG(Info, "Input %zu has expected shape [30, 13, 3]: %s",
+                  input_index, is_expected_shape ? "Yes" : "No");
+  
+          // Print first few elements (assuming float tensor)
+          if (input_tensor.scalar_type() == executorch::aten::ScalarType::Float) {
+              const float* data = input_tensor.const_data_ptr<float>();
+              size_t num_elements = input_tensor.nbytes() / sizeof(float);
+              ET_LOG(Info, "Input %zu tensor values (first 10 elements):", input_index);
+              for (size_t i = 0; i < std::min(num_elements, size_t(10)); ++i) {
+                  ET_LOG(Info, "  [%zu]: %f", i, data[i]);
+              }
+          } else {
+              ET_LOG(Info, "Input %zu is not a float tensor, skipping print.", input_index);
+          }
+  
+          // Save input tensor to file
+          auto input_file_name = FLAGS_output_folder_path + "/default_input_" +
+                                  std::to_string(input_index) + ".raw";
+          std::ofstream fout(input_file_name.c_str(), std::ios::binary);
+          fout.write(
+              static_cast<const char*>(input_tensor.const_data_ptr()), input_tensor.nbytes());
+          fout.close();
+          ET_LOG(Info, "Input %zu saved to %s", input_index, input_file_name.c_str());
+      }
+  
+      // Execute the model
+      Error status = method->execute();
+      ET_CHECK_MSG(
+          status == Error::Ok,
+          "Execution of method %s failed with status 0x%" PRIx32,
+          method_name,
+          (int)status);
+      ET_LOG(Info, "Model executed successfully.");
+  
+      // Retrieve and process outputs
+      std::vector<EValue> outputs(method->outputs_size());
+      status = method->get_outputs(outputs.data(), method->outputs_size());
+      ET_CHECK_MSG(
+          status == Error::Ok,
+          "Failed to get outputs: 0x%" PRIx32,
+          (int)status);
+  
+      // Save or print outputs
+      for (size_t output_index = 0; output_index < method->outputs_size(); ++output_index) {
+          auto output_tensor = outputs[output_index].toTensor();
+          auto output_file_name = FLAGS_output_folder_path + "/default_output_" +
+                                  std::to_string(output_index) + ".raw";
+          
+          // Save to file
+          std::ofstream fout(output_file_name.c_str(), std::ios::binary);
+          fout.write(
+              static_cast<const char*>(output_tensor.const_data_ptr()), output_tensor.nbytes());
+          fout.close();
+          ET_LOG(Info, "Output %zu saved to %s", output_index, output_file_name.c_str());
+  
+          // Print tensor values (assuming float tensor)
+          if (output_tensor.scalar_type() == executorch::aten::ScalarType::Float) {
+              const float* data = output_tensor.const_data_ptr<float>();
+              size_t num_elements = output_tensor.nbytes() / sizeof(float);
+              ET_LOG(Info, "Output %zu tensor values (first 10 elements):", output_index);
+              for (size_t i = 0; i < std::min(num_elements, size_t(128)); ++i) {
+                  ET_LOG(Info, "  [%zu]: %f", i, data[i]);
+              }
+          } else {
+              ET_LOG(Info, "Output %zu is not a float tensor, skipping print.", output_index);
+          }
+  
+          // Log output shape
+          auto output_sizes = output_tensor.sizes();
+          std::string output_shape_str = "[";
+          for (size_t i = 0; i < output_sizes.size(); ++i) {
+              output_shape_str += std::to_string(output_sizes[i]);
+              if (i < output_sizes.size() - 1) output_shape_str += ", ";
+          }
+          output_shape_str += "]";
+          ET_LOG(Info, "Output %zu shape: %s", output_index, output_shape_str.c_str());
+      }
   }
 
   // Dump the etdump data containing profiling/debugging data to the specified
