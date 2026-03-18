@@ -30,8 +30,8 @@ class A_LSTM(nn.Module):
         hidden_size = 128  # Each GRU: 128, concatenated to 256
         
         # First layer: input_size=39
-        self.gru_forward_l0 = nn.GRU(input_size=39, hidden_size=hidden_size, num_layers=1, bidirectional=False)
-        self.gru_backward_l0 = nn.GRU(input_size=39, hidden_size=hidden_size, num_layers=1, bidirectional=False)
+        self.gru_forward_l0 = nn.GRU(input_size=joints_num*dim_num, hidden_size=hidden_size, num_layers=1, bidirectional=False)
+        self.gru_backward_l0 = nn.GRU(input_size=joints_num*dim_num, hidden_size=hidden_size, num_layers=1, bidirectional=False)
         # Second layer: input_size=256 (concatenated)
         self.gru_forward_l1 = nn.GRU(input_size=hidden_size*2, hidden_size=hidden_size, num_layers=1, bidirectional=False)
         self.gru_backward_l1 = nn.GRU(input_size=hidden_size*2, hidden_size=hidden_size, num_layers=1, bidirectional=False)

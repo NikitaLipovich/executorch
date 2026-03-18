@@ -77,14 +77,19 @@ def main(args):
     data_num = 100
     if args.compile_only:
         #inputs = [(torch.rand(1, 3, 224, 224),)]
+        '''
         inputs = [(Variable(torch.ones(30, 13, 3)).float().squeeze()\
                 .view(-1, 30,39).permute(1,0,2),)]
+        '''
+        inputs = [(Variable(torch.ones(30, 11, 2)).float().squeeze()\
+                .view(-1, 30,22).permute(1,0,2),)]
     else:
         inputs, targets, input_list = get_dataset(
             data_size=data_num, dataset_dir=args.artifact, download=args.download
         )
 
-    pte_filename = "mmd_nca_net_qualcomm"
+    #pte_filename = "mmd_nca_net_qualcomm"
+    pte_filename = "mmd_nca_net_qualcomm_11_front_proj"    
     instance = MmdNcaNetModel()
 
     build_executorch_binary(
