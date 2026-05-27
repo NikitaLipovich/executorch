@@ -30,8 +30,12 @@ class MmdNcaNetModel(EagerModelBase):
         mmd_nca_model.load_weights(
             '/workspace/workspace/executorch/examples/models/mmd_nca_net/weights/sequential_250_128_meta_quest_2d_proj_30_14_synced_12999.pth')
         '''
+        '''
         mmd_nca_model.load_weights(
-            '/workspace/workspace/executorch/examples/models/mmd_nca_net/weights/sequential_250_128_mocopi_2d_proj_30_11_synced_1249.pth')
+            '/workspace/workspace/executorch/examples/models/mmd_nca_net/weights/sequential_250_128_mocopi_body_2d_proj_30_12_77999.pth')
+        '''
+        mmd_nca_model.load_weights(
+            '/workspace/workspace/executorch/examples/models/mmd_nca_net/weights/sequential_250_128_mocopi_legs_2d_proj_30_11_15999.pth')
         logging.info("loaded mmd_nca_net weights")
         return mmd_nca_model
 

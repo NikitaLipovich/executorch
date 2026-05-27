@@ -178,6 +178,7 @@ subprocess.run(
         "-m",
         "pip",
         "install",
+        "--no-build-isolation",
         *LOCAL_REQUIREMENTS,
     ],
     check=True,
